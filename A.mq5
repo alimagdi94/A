@@ -67,10 +67,6 @@ input color    InpClrInfoPendAct = C'0,0,0';      // Pending Count Active Color
 input color    InpClrInfoPosBase = C'0,0,0';      // Position Base Color
 input color    InpClrInfoPosBuy  = C'0,0,0';      // Position Buy Color
 input color    InpClrInfoPosSell = C'0,0,0';      // Position Sell Color
-input color    InpClrFlashBuy    = C'0,0,0';      // Flash Buy Sent Color
-input color    InpClrFlashSell   = C'0,0,0';      // Flash Sell Sent Color
-input color    InpClrFlashPend   = C'0,0,0';      // Flash Pending Color
-input color    InpClrFlashBE     = C'0,0,0';      // Flash B/E Set Color
 
 input group "Panel Position"
 input int      InpPanelX      = 15;        // Panel X Position
@@ -135,7 +131,6 @@ input int      InpKeyDock     = 89;       // Dock Panel Hotkey ('Y' default)
 #define LBL_MARG_REQ PREFIX + "MargReq"
 #define LBL_SPREAD   PREFIX + "Spread"
 #define LBL_RR       PREFIX + "RR"
-#define LBL_FLASH    PREFIX + "Flash"
 #define LBL_PEND     PREFIX + "PendCount"
 #define LBL_POS_SUMMARY PREFIX + "PosSum"
 
@@ -228,11 +223,6 @@ bool g_IsDragging     = false;
 int  g_DragOffsetX    = 0;
 int  g_DragOffsetY    = 0;
 bool g_ChartScrollSaved = true;  // Saved chart scroll state before drag
-
-// --- Flash Feedback ---
-datetime g_FlashExpiry = 0;   // When the flash label should disappear
-string   g_FlashText  = "";  // Text to show briefly on execution
-color    g_FlashColor = clrWhite;
 
 // --- Breakeven Key ---
 #define KEY_1 49
@@ -344,7 +334,6 @@ void OnTimer()
    // Force Sync occasionally to ensure PnL/Status match on idle ticks
    UpdateRealtimeStatistics();
    UpdateSpread();
-   UpdateFlash();
    UpdatePendingCount();
    UpdatePositionSummary();
    ChartRedraw();
@@ -1084,11 +1073,11 @@ void ExecuteOrder(ENUM_ORDER_TYPE type) {
    
     if(g_ExecMode == MODE_MARKET) {
         if(type == ORDER_TYPE_BUY) { 
-            if(trade.Buy(g_LotSize, _Symbol, 0, sl, tp, "Buy")) { TradeSequence++; ShowFlash("BUY SENT " + DoubleToString(g_LotSize,2), InpClrFlashBuy); }
+            if(trade.Buy(g_LotSize, _Symbol, 0, sl, tp, "Buy")) { TradeSequence++; }
             else Print("Buy Error: ", GetLastError());
         }
         else { 
-            if(trade.Sell(g_LotSize, _Symbol, 0, sl, tp, "Sell")) { TradeSequence++; ShowFlash("SELL SENT " + DoubleToString(g_LotSize,2), InpClrFlashSell); }
+            if(trade.Sell(g_LotSize, _Symbol, 0, sl, tp, "Sell")) { TradeSequence++; }
             else Print("Sell Error: ", GetLastError());
         }
     } else {
@@ -1112,7 +1101,6 @@ void ExecuteOrder(ENUM_ORDER_TYPE type) {
  
        if(trade.OrderOpen(_Symbol, pendingType, g_LotSize, limitPrice, price, sl, tp, ORDER_TIME_GTC, 0, comment)) {
            TradeSequence++;
-           ShowFlash(comment + " " + DoubleToString(g_LotSize,2), InpClrFlashPend);
        } else {
            Print("OrderOpen Error: ", GetLastError());
        }
@@ -1538,10 +1526,6 @@ void CreateGUI() {
    int timerX = PanelX + (PANEL_W / 2);
    CreateLbl(LBL_T_TITLE, "TIME UNTIL CLOSE", timerX - 45, y - 18, InpClrTimerTitle, 7, false);
    CreateLbl(LBL_TIMER, "00:00", timerX - 30, y - 5, InpClrTimer, 14, true);
-    
-   // Placeholder Flash Label (Ready state)
-   int flashY = PanelY + PANEL_H_FULL - 25; 
-   CreateLbl(LBL_FLASH, "Ready", PanelX + 10, flashY, InpClrText, 9, true);
 
    // Initialize delighter displays
    UpdateRR();
@@ -1632,10 +1616,6 @@ void MoveToBreakeven() {
          }
       }
    }
-   
-   if(modified > 0) {
-      ShowFlash("B/E SET (" + IntegerToString(modified) + ")", InpClrFlashBE);
-   }
 }
 
 //+------------------------------------------------------------------+
@@ -1675,40 +1655,6 @@ void UpdateRR() {
    } else {
       ObjectSetString(0, LBL_RR, OBJPROP_TEXT, " ");
       ObjectSetInteger(0, LBL_RR, OBJPROP_COLOR, InpClrHeader); // Hide completely (match header bg)
-   }
-}
-
-//+------------------------------------------------------------------+
-//| DELIGHTER: Flash Feedback - Brief visual confirmation            |
-//+------------------------------------------------------------------+
-void ShowFlash(string text, color clr) {
-   g_FlashText   = text;
-   g_FlashColor  = clr;
-   g_FlashExpiry = TimeCurrent() + 3; // Show for 3 seconds
-   
-   // Create or update the flash label on-demand (avoids 'Label' placeholder)
-   if(ObjectFind(0, LBL_FLASH) < 0) {
-      // Position below the timer area
-      int flashY = PanelY + PANEL_H_FULL - 25; // Near bottom of panel
-      CreateLbl(LBL_FLASH, g_FlashText, PanelX + 10, flashY, g_FlashColor, 9, true);
-   } else {
-      ObjectSetString(0, LBL_FLASH, OBJPROP_TEXT, g_FlashText);
-      ObjectSetInteger(0, LBL_FLASH, OBJPROP_COLOR, g_FlashColor);
-   }
-   ChartRedraw();
-}
-
-void UpdateFlash() {
-   if(g_FlashExpiry == 0) return;
-   
-   if(TimeCurrent() >= g_FlashExpiry) {
-      // Revert flash label to placeholder text
-      g_FlashExpiry = 0;
-      g_FlashText = "Ready";
-      if(ObjectFind(0, LBL_FLASH) >= 0) {
-         ObjectSetString(0, LBL_FLASH, OBJPROP_TEXT, g_FlashText);
-         ObjectSetInteger(0, LBL_FLASH, OBJPROP_COLOR, InpClrText); // Default White color
-      }
    }
 }
 

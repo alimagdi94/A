@@ -1,5 +1,3 @@
-# Refactor the code removing this feature 
+* Add options to control the GUI Width and hight
 
-  // Placeholder Flash Label (Ready state)
-   int flashY = PanelY + PANEL_H_FULL - 25; 
-   CreateLbl(LBL_FLASH, "Ready", PanelX + 10, flashY, InpClrText, 9, true);
+* Refacor the Alignment, make sure to use the spaces better, we have alot of clutter in the header, and a very empty space in the bottom, make it look more professional and premium, and compact,
