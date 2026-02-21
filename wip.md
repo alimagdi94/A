@@ -1,2 +1,2 @@
-* [x] refactor A visual appearance A.mq5
-* [x] fix button allginment as higlighted in the screenshot Loss D is getting out of the panel 
+Target is C:\Users\Ali\Desktop\A\A\A.mq5 only.
+* [x] Code review and refacotr changes, only visual changes, no logic changes.

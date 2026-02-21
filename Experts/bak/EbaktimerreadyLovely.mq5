@@ -51,22 +51,22 @@ input color    InpClrSL       = C'255,255,255';   // SL Line Color (White)
 input color    InpClrTP       = C'0,255,0';       // TP Line Color (Green)
 
 input group "Information Colors"
-input color    InpClrInfoPnLBase = clrWhite;       // PnL Base Color
-input color    InpClrInfoPnLWin  = C'0,255,0';     // PnL Win Color
-input color    InpClrInfoPnLLoss = C'255,80,80';   // PnL Loss Color
-input color    InpClrInfoBal     = clrSkyBlue;     // Balance Color
-input color    InpClrInfoMarg    = clrGold;        // Margin/Lot Cost Color
-input color    InpClrInfoSprdBase= clrSilver;      // Spread Base Color
-input color    InpClrInfoSprdGood= C'0,255,0';     // Spread Good Color
-input color    InpClrInfoSprdMed = clrGold;        // Spread Medium Color
-input color    InpClrInfoSprdWide= C'255,80,80';   // Spread Wide Color
-input color    InpClrInfoRRWin   = C'0,255,0';     // R:R Favorable Color
-input color    InpClrInfoRRLoss  = C'255,80,80';   // R:R Unfavorable Color
-input color    InpClrInfoPendBase= clrSilver;      // Pending Count Base Color
-input color    InpClrInfoPendAct = clrCyan;        // Pending Count Active Color
-input color    InpClrInfoPosBase = clrSilver;      // Position Base Color
-input color    InpClrInfoPosBuy  = C'0,210,255';   // Position Buy Color
-input color    InpClrInfoPosSell = C'255,100,255'; // Position Sell Color
+input color    InpClrInfoPnLBase = C'0,0,0';      // PnL Base Color
+input color    InpClrInfoPnLWin  = C'0,0,0';      // PnL Win Color
+input color    InpClrInfoPnLLoss = C'0,0,0';      // PnL Loss Color
+input color    InpClrInfoBal     = C'0,0,0';      // Balance Color
+input color    InpClrInfoMarg    = C'0,0,0';      // Margin/Lot Cost Color
+input color    InpClrInfoSprdBase= C'0,0,0';      // Spread Base Color
+input color    InpClrInfoSprdGood= C'0,0,0';      // Spread Good Color
+input color    InpClrInfoSprdMed = C'0,0,0';      // Spread Medium Color
+input color    InpClrInfoSprdWide= C'0,0,0';      // Spread Wide Color
+input color    InpClrInfoRRWin   = C'0,0,0';      // R:R Favorable Color
+input color    InpClrInfoRRLoss  = C'0,0,0';      // R:R Unfavorable Color
+input color    InpClrInfoPendBase= C'0,0,0';      // Pending Count Base Color
+input color    InpClrInfoPendAct = C'0,0,0';      // Pending Count Active Color
+input color    InpClrInfoPosBase = C'0,0,0';      // Position Base Color
+input color    InpClrInfoPosBuy  = C'0,0,0';      // Position Buy Color
+input color    InpClrInfoPosSell = C'0,0,0';      // Position Sell Color
 
 input group "Panel Position & Size"
 input int      InpPanelX      = 15;        // Panel X Position
@@ -1411,15 +1411,14 @@ void CreateGUI() {
    ObjectSetInteger(0, BG_HEADER, OBJPROP_BGCOLOR, InpClrHeader); ObjectSetInteger(0, BG_HEADER, OBJPROP_COLOR, InpClrBorder); ObjectSetInteger(0, BG_HEADER, OBJPROP_ZORDER, 1);
 
    // Header Row: Centered Timer + Control Buttons
-   CreateLbl(LBL_TIMER, "00:00", PanelX + (InpPanelW / 2) - 18, y + 12, InpClrTimer, 12, true);
+   CreateLbl(LBL_TIMER, "00:00", PanelX + (InpPanelW / 2) - 25, y + 12, InpClrTimer, 12, true);
    
    // Header buttons (top-right)
-   int btnY = y + 13; 
-   CreateBtn(BTN_MINMAX, IsMinimized ? "+" : "−", PanelX + InpPanelW - 22, btnY - 9, 18, 18, InpClrInactive, 9);
+   CreateBtn(BTN_MINMAX, IsMinimized ? "+" : "−", PanelX + InpPanelW - 22, y + 2, 18, 18, InpClrInactive, 9);
    ObjectSetString(0, BTN_MINMAX, OBJPROP_TOOLTIP, "Minimize (F) / Hide (R)");
-   CreateBtn(BTN_RESET, ShortToString(0x21BB), PanelX + InpPanelW - 42, btnY - 9, 18, 18, InpClrInactive, 10);
+   CreateBtn(BTN_RESET, ShortToString(0x21BB), PanelX + InpPanelW - 42, y + 2, 18, 18, InpClrInactive, 10);
    ObjectSetString(0, BTN_RESET, OBJPROP_TOOLTIP, "Reset Position to Default");
-   CreateBtn(BTN_DOCK, g_IsDocked ? "L" : "U", PanelX + InpPanelW - 62, btnY - 9, 18, 18, InpClrInactive, 9);
+   CreateBtn(BTN_DOCK, g_IsDocked ? "L" : "U", PanelX + InpPanelW - 62, y + 2, 18, 18, InpClrInactive, 9);
    ObjectSetString(0, BTN_DOCK, OBJPROP_TOOLTIP, "Dock/Lock Panel (" + ShortToString((ushort)InpKeyDock) + ")");
    
    if(IsMinimized) return;
@@ -1522,15 +1521,14 @@ void CreateGUI() {
    y += 28; 
    // Footer Row 1: PnL & Balance
    CreateLbl(LBL_PNL, "PnL: 0.00", PanelX + 10, y, InpClrInfoPnLBase, 10, true);
-   if(InpShowBalance) CreateLbl(LBL_BALANCE, "Bal: $...", PanelX + 135, y + 1, InpClrInfoBal, 8, true);
+   if(InpShowBalance) CreateLbl(LBL_BALANCE, "Bal: $...", PanelX + 140, y + 1, InpClrInfoBal, 8, true);
    
    y += 18;
-   // Footer Row 2: Balanced Spacing (Spread | Pending | R:R | Pos Summary)
-   int colW = (InpPanelW - 20) / 4;
+   // Footer Row 2: Spread | Pending | R:R | Pos Summary
    CreateLbl(LBL_SPREAD, "Sprd: 0", PanelX + 10, y, InpClrInfoSprdBase, 8, false);
-   CreateLbl(LBL_PEND, "Pend: 0", PanelX + 10 + colW, y, InpClrInfoPendBase, 8, false);
-   CreateLbl(LBL_RR, "R:R 1:0", PanelX + 10 + colW * 2, y, InpClrInfoRRWin, 8, false);
-   CreateLbl(LBL_POS_SUMMARY, "NET: ...", PanelX + 10 + colW * 3, y, InpClrInfoPosBase, 8, false);
+   CreateLbl(LBL_PEND, "Pend: 0", PanelX + 65, y, InpClrInfoPendBase, 8, false);
+   CreateLbl(LBL_RR, "R:R 1:0", PanelX + 115, y, InpClrInfoRRWin, 8, false);
+   CreateLbl(LBL_POS_SUMMARY, "NET: ...", PanelX + 185, y, InpClrInfoPosBase, 8, false);
 
    // Initialize delighter displays
    UpdateRR();
