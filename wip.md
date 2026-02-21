@@ -1,3 +1,2 @@
-* [] refactor A visual appearance A.mq5
-* [] Make sure labels fit the buttons
-* [] Choose more use friendy Symbols for the Dock, min, reset buttons
+* [x] refactor A visual appearance A.mq5
+* [x] fix button allginment as higlighted in the screenshot Loss D is getting out of the panel 

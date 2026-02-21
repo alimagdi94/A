@@ -1462,7 +1462,7 @@ void CreateGUI() {
    CreateBtn(BTN_SL_UP, "▲", PanelX + 112, y, 18, EDIT_H, InpClrBtnAdj, 8); 
    CreateBtn(BTN_USE_SL, EnableSL ? "✔" : "✖", PanelX + 132, y, 18, EDIT_H, EnableSL ? InpClrActive : InpClrInactive, 8);
    CreateBtn(BTN_ASGN_SL, "ASGN (G)", PanelX + 154, y, 62, EDIT_H, InpClrAsgnSL, 8);
-   CreateLbl(LBL_RR, " ", PanelX + 225, y + 2, InpClrInfoRRWin, 8, false); 
+   CreateLbl(LBL_RR, " ", PanelX + 220, y + 2, InpClrInfoRRWin, 8, false); 
 
    // Row 3: Take Profit (Inline)
    y += 22;
@@ -1515,7 +1515,7 @@ void CreateGUI() {
    
    // --- SECONDARY TIGHTER GRID ---
    y += 28;
-   int btnW4 = (InpPanelW - 35) / 4; 
+   int btnW4 = (InpPanelW - 25) / 4; 
    CreateBtn(BTN_C_BUY, "BUY (Z)", PanelX + 10, y, btnW4, 20, InpClrClose, 8); 
    CreateBtn(BTN_C_SELL, "SELL (X)", PanelX + 15 + btnW4, y, btnW4, 20, InpClrClose, 8);
    CreateBtn(BTN_C_WIN, "WIN (C)", PanelX + 20 + (btnW4 * 2), y, btnW4, 20, InpClrClose, 8); 
