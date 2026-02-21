@@ -1,3 +1,5 @@
-# add input to this EA please to control the clours of 
+# Refactor the code removing this feature 
 
-# the flashing order notification that tybes BUYSENT Default also to black
+  // Placeholder Flash Label (Ready state)
+   int flashY = PanelY + PANEL_H_FULL - 25; 
+   CreateLbl(LBL_FLASH, "Ready", PanelX + 10, flashY, InpClrText, 9, true);

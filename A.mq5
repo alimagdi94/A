@@ -67,6 +67,10 @@ input color    InpClrInfoPendAct = C'0,0,0';      // Pending Count Active Color
 input color    InpClrInfoPosBase = C'0,0,0';      // Position Base Color
 input color    InpClrInfoPosBuy  = C'0,0,0';      // Position Buy Color
 input color    InpClrInfoPosSell = C'0,0,0';      // Position Sell Color
+input color    InpClrFlashBuy    = C'0,0,0';      // Flash Buy Sent Color
+input color    InpClrFlashSell   = C'0,0,0';      // Flash Sell Sent Color
+input color    InpClrFlashPend   = C'0,0,0';      // Flash Pending Color
+input color    InpClrFlashBE     = C'0,0,0';      // Flash B/E Set Color
 
 input group "Panel Position"
 input int      InpPanelX      = 15;        // Panel X Position
@@ -1080,11 +1084,11 @@ void ExecuteOrder(ENUM_ORDER_TYPE type) {
    
     if(g_ExecMode == MODE_MARKET) {
         if(type == ORDER_TYPE_BUY) { 
-            if(trade.Buy(g_LotSize, _Symbol, 0, sl, tp, "Buy")) { TradeSequence++; ShowFlash("BUY SENT " + DoubleToString(g_LotSize,2), C'0,200,100'); }
+            if(trade.Buy(g_LotSize, _Symbol, 0, sl, tp, "Buy")) { TradeSequence++; ShowFlash("BUY SENT " + DoubleToString(g_LotSize,2), InpClrFlashBuy); }
             else Print("Buy Error: ", GetLastError());
         }
         else { 
-            if(trade.Sell(g_LotSize, _Symbol, 0, sl, tp, "Sell")) { TradeSequence++; ShowFlash("SELL SENT " + DoubleToString(g_LotSize,2), C'255,80,80'); }
+            if(trade.Sell(g_LotSize, _Symbol, 0, sl, tp, "Sell")) { TradeSequence++; ShowFlash("SELL SENT " + DoubleToString(g_LotSize,2), InpClrFlashSell); }
             else Print("Sell Error: ", GetLastError());
         }
     } else {
@@ -1108,7 +1112,7 @@ void ExecuteOrder(ENUM_ORDER_TYPE type) {
  
        if(trade.OrderOpen(_Symbol, pendingType, g_LotSize, limitPrice, price, sl, tp, ORDER_TIME_GTC, 0, comment)) {
            TradeSequence++;
-           ShowFlash(comment + " " + DoubleToString(g_LotSize,2), C'255,215,0');
+           ShowFlash(comment + " " + DoubleToString(g_LotSize,2), InpClrFlashPend);
        } else {
            Print("OrderOpen Error: ", GetLastError());
        }
@@ -1630,7 +1634,7 @@ void MoveToBreakeven() {
    }
    
    if(modified > 0) {
-      ShowFlash("B/E SET (" + IntegerToString(modified) + ")", C'0,200,255');
+      ShowFlash("B/E SET (" + IntegerToString(modified) + ")", InpClrFlashBE);
    }
 }
 
