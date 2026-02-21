@@ -32,7 +32,6 @@ input color    InpClrGroupBox = C'20,20,20';      // Group Box Background (Dark 
 input color    InpClrBorder   = C'45,50,70';      // Border Color (Dark Blue-Grey)
 input color    InpClrInput    = C'40,40,40';      // Input Box Background (Charcoal)
 input color    InpClrText     = C'255,255,255';   // Label Text (White)
-input color    InpClrPnL      = C'255,255,255';   // PnL Text Color (White)
 input color    InpClrTextIn   = C'255,255,255';   // Input Text Color (White)
 input color    InpClrBuy      = C'60,60,60';      // Buy Button (Dark Grey)
 input color    InpClrSell     = C'40,40,40';      // Sell Button (Charcoal)
@@ -50,6 +49,24 @@ input color    InpClrTimer    = C'255,255,255';   // Timer Color (White)
 input color    InpClrTimerTitle = C'180,180,180'; // Timer Title Color (Silver)
 input color    InpClrSL       = C'255,255,255';   // SL Line Color (White)
 input color    InpClrTP       = C'0,255,0';       // TP Line Color (Green)
+
+input group "Information Colors"
+input color    InpClrInfoPnLBase = C'0,0,0';      // PnL Base Color
+input color    InpClrInfoPnLWin  = C'0,0,0';      // PnL Win Color
+input color    InpClrInfoPnLLoss = C'0,0,0';      // PnL Loss Color
+input color    InpClrInfoBal     = C'0,0,0';      // Balance Color
+input color    InpClrInfoMarg    = C'0,0,0';      // Margin/Lot Cost Color
+input color    InpClrInfoSprdBase= C'0,0,0';      // Spread Base Color
+input color    InpClrInfoSprdGood= C'0,0,0';      // Spread Good Color
+input color    InpClrInfoSprdMed = C'0,0,0';      // Spread Medium Color
+input color    InpClrInfoSprdWide= C'0,0,0';      // Spread Wide Color
+input color    InpClrInfoRRWin   = C'0,0,0';      // R:R Favorable Color
+input color    InpClrInfoRRLoss  = C'0,0,0';      // R:R Unfavorable Color
+input color    InpClrInfoPendBase= C'0,0,0';      // Pending Count Base Color
+input color    InpClrInfoPendAct = C'0,0,0';      // Pending Count Active Color
+input color    InpClrInfoPosBase = C'0,0,0';      // Position Base Color
+input color    InpClrInfoPosBuy  = C'0,0,0';      // Position Buy Color
+input color    InpClrInfoPosSell = C'0,0,0';      // Position Sell Color
 
 input group "Panel Position"
 input int      InpPanelX      = 15;        // Panel X Position
@@ -380,10 +397,10 @@ bool UpdatePnL() {
           ObjectSetString(0, LBL_PNL, OBJPROP_TEXT, pnlText);
           
           // Color: Green when profit, Red when loss, White when flat
-          color pnlColor = InpClrPnL; // Default white
+          color pnlColor = InpClrInfoPnLBase; // Default
           if(posCount > 0) {
-             if(pnl > 0) pnlColor = C'0,200,100';       // Green
-             else if(pnl < 0) pnlColor = C'255,80,80';  // Red
+             if(pnl > 0) pnlColor = InpClrInfoPnLWin;       // Green/Win
+             else if(pnl < 0) pnlColor = InpClrInfoPnLLoss;  // Red/Loss
           }
           ObjectSetInteger(0, LBL_PNL, OBJPROP_COLOR, pnlColor);
        }
@@ -436,7 +453,7 @@ void UpdateBalance() {
       else balText = "Bal: $" + DoubleToString(bal, 2);
       
       ObjectSetString(0, LBL_BALANCE, OBJPROP_TEXT, balText);
-      ObjectSetInteger(0, LBL_BALANCE, OBJPROP_COLOR, clrWhite);
+      ObjectSetInteger(0, LBL_BALANCE, OBJPROP_COLOR, InpClrInfoBal);
    }
 }
 
@@ -1404,21 +1421,21 @@ void CreateGUI() {
    ObjectSetString(0, BTN_DOCK, OBJPROP_TOOLTIP, "Dock/Lock Panel (" + ShortToString((ushort)InpKeyDock) + ")");
 
    // Header Row 1: PnL (left), Balance (Middle-Right)
-   CreateLbl(LBL_PNL, "PnL: 0.00", PanelX + 5, y + 2, InpClrPnL, 10, true);
+   CreateLbl(LBL_PNL, "PnL: 0.00", PanelX + 5, y + 2, InpClrInfoPnLBase, 10, true);
    
    if(InpShowBalance && !IsMinimized) {
-      CreateLbl(LBL_BALANCE, "Bal: ...", PanelX + 110, y + 4, clrWhite, 8, true); 
+      CreateLbl(LBL_BALANCE, "Bal: ...", PanelX + 110, y + 4, InpClrInfoBal, 8, true); 
    }
    
    // Header Row 2: Margin | Spread | Pending Count
    if(!IsMinimized) {
-       CreateLbl(LBL_MARG_REQ, "$0.00", PanelX + 5, y + 22, InpClrText, 8, false);
-       CreateLbl(LBL_SPREAD, "Sprd: 0", PanelX + 60, y + 22, C'120,120,120', 8, false);
-       CreateLbl(LBL_PEND, "Pend: 0", PanelX + 115, y + 22, C'120,120,120', 8, false);
+       CreateLbl(LBL_MARG_REQ, "$0.00", PanelX + 5, y + 22, InpClrInfoMarg, 8, false);
+       CreateLbl(LBL_SPREAD, "Sprd: 0", PanelX + 60, y + 22, InpClrInfoSprdBase, 8, false);
+       CreateLbl(LBL_PEND, "Pend: 0", PanelX + 115, y + 22, InpClrInfoPendBase, 8, false);
    }
    
    // Position Summary (Net Direction/Volume)
-   CreateLbl(LBL_POS_SUMMARY, " ", PanelX + 175, y + 22, C'180,180,180', 8, false);
+   CreateLbl(LBL_POS_SUMMARY, " ", PanelX + 175, y + 22, InpClrInfoPosBase, 8, false);
    
    if(IsMinimized) return;
    
@@ -1450,7 +1467,7 @@ void CreateGUI() {
    CreateBtn(BTN_SL_UP, "▲", PanelX + 114, y, 18, EDIT_H, InpClrBtnAdj, 8); 
    CreateBtn(BTN_USE_SL, EnableSL ? "✔" : "✖", PanelX + 134, y, 18, EDIT_H, EnableSL ? InpClrActive : InpClrInactive, 8);
    CreateBtn(BTN_ASGN_SL, "ASGN(G)", PanelX + 156, y, 55, EDIT_H, InpClrAsgnSL, 8);
-   CreateLbl(LBL_RR, " ", PanelX + 215, y + 2, C'180,180,180', 8, false); 
+   CreateLbl(LBL_RR, " ", PanelX + 215, y + 2, InpClrInfoRRWin, 8, false); 
 
    // Row 3: Take Profit (Inline)
    y += 22;
@@ -1629,10 +1646,10 @@ void UpdateSpread() {
    ObjectSetString(0, LBL_SPREAD, OBJPROP_TEXT, spreadText);
    
    // Color code: low spread green, high spread red
-   color spreadClr = C'120,120,120'; // Default grey
-   if(spreadPts <= 20) spreadClr = C'0,200,100';       // Good
-   else if(spreadPts <= 50) spreadClr = C'255,200,0';  // Medium
-   else spreadClr = C'255,80,80';                       // Wide
+   color spreadClr = InpClrInfoSprdBase; // Default grey
+   if(spreadPts <= 20) spreadClr = InpClrInfoSprdGood;       // Good
+   else if(spreadPts <= 50) spreadClr = InpClrInfoSprdMed;  // Medium
+   else spreadClr = InpClrInfoSprdWide;                       // Wide
    ObjectSetInteger(0, LBL_SPREAD, OBJPROP_COLOR, spreadClr);
 }
 
@@ -1649,7 +1666,7 @@ void UpdateRR() {
       ObjectSetString(0, LBL_RR, OBJPROP_TEXT, rrText);
       
       // Color: favorable (>=1) green, unfavorable red
-      color rrClr = (rr >= 1.0) ? C'0,200,100' : C'255,80,80';
+      color rrClr = (rr >= 1.0) ? InpClrInfoRRWin : InpClrInfoRRLoss;
       ObjectSetInteger(0, LBL_RR, OBJPROP_COLOR, rrClr);
    } else {
       ObjectSetString(0, LBL_RR, OBJPROP_TEXT, " ");
@@ -1709,7 +1726,7 @@ void UpdatePendingCount() {
    ObjectSetString(0, LBL_PEND, OBJPROP_TEXT, pendText);
    
    // Color: grey when 0, cyan when active
-   color pendClr = (pendCount > 0) ? C'0,200,255' : C'120,120,120';
+   color pendClr = (pendCount > 0) ? InpClrInfoPendAct : InpClrInfoPendBase;
    ObjectSetInteger(0, LBL_PEND, OBJPROP_COLOR, pendClr);
 }
 
@@ -1739,17 +1756,17 @@ void UpdatePositionSummary() {
    }
    
    string text = "";
-   color clr = C'120,120,120';
+   color clr = InpClrInfoPosBase;
    
    if(buyCount == 0 && sellCount == 0) {
        text = " "; // Hide if flat (no open orders)
    } else {
        if(netVol > 0) {
            text = "BUY " + DoubleToString(netVol, 2);
-           clr = C'0,200,100'; // Green
+           clr = InpClrInfoPosBuy; // Green
        } else if(netVol < 0) {
            text = "SELL " + DoubleToString(MathAbs(netVol), 2);
-           clr = C'255,80,80'; // Red
+           clr = InpClrInfoPosSell; // Red
        } else {
            text = "FLAT " + DoubleToString(MathAbs(netVol), 2); // Hedged perfectly?
        }
